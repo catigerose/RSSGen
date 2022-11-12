@@ -152,7 +152,7 @@ if __name__ == '__main__':
     lastBuildDate = datetime.datetime.now(),
 
     items =gen_rssitems(news_titles,news_links,news_details))
-    rss.write_xml(open("./home/renmrb.xml", "w",encoding='UTF-16'))
+    rss.write_xml(open("/home/renmrb.xml", "w",encoding='UTF-16'))# 保存到linux home文件夹下，windows 下运行需要更改地址
 
 
 # In[ ]:
