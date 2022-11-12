@@ -14,37 +14,37 @@ from datetime import date
 
 # # 1. 获取今天的日期（年，月，日） 
 
-# In[14]:
+# In[2]:
 
 
 today = date.today()
 
 
-# In[15]:
+# In[3]:
 
 
 year= today.year
 month =today.month 
 day= today.day
-weekday =today.weekday()
+weekday =today.weekday()#周末排版不一样
 
 
-# In[16]:
+# In[4]:
 
 
-str_today = '{}-{}/{}'.format(year, month, day)#拼接成url需要的格式
-str_today
+str_today = '{}-{}/{}/'.format(year, month, day)#拼接成url需要的格式
+#str_today
 
 
 # # 2.生成要爬取的url组
 
-# In[17]:
+# In[5]:
 
 
-domain = "http://paper.people.com.cn/rmrb/html/"+str_today +"/nbs.D110000renmrb_"  #url前面公用的域名
+domain = "http://paper.people.com.cn/rmrb/html/"+str_today  #url和新闻详情页 前面公用的域名
 
 
-# In[18]:
+# In[6]:
 
 
 spaces1 = ["01.htm","02.htm","03.htm","04.htm","05.htm","06.htm","07.htm","08.htm","09.htm","10.htm","14.htm","17.htm"] #工作日新闻版面类别
@@ -58,10 +58,10 @@ else:
 urls =[]
 
 for space in spaces:    
-   urls.append(domain + space) 
+   urls.append(domain+"nbs.D110000renmrb_"  + space) 
 
 
-# In[19]:
+# In[7]:
 
 
 urls
@@ -69,7 +69,7 @@ urls
 
 # # 3. 爬取版面内的新闻
 
-# In[7]:
+# In[8]:
 
 
 #请求头
@@ -77,20 +77,17 @@ headers = { "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit
 }
 
 
-# In[8]:
-
-
-domain2 = "http://paper.people.com.cn/rmrb/html/2022-11/11/"  #详情页的域名
-
-
 # In[9]:
 
 
-#获取详情页的新闻内容
+#该函数获取详情页的新闻内容
 def get_text(news_link):
     detialHtml=requests.get(news_link,headers=headers)
     detialHtml.encoding = detialHtml.apparent_encoding 
-    return detialHtml.text
+    soup = BeautifulSoup(detialHtml.text, 'html.parser') # 构建beautifulsoup实例
+    news_detail = soup.find("div", class_="article")#获取新闻内容详情
+    news_detail =news_detail.text
+    return news_detail
 
 
 # In[10]:
@@ -109,7 +106,7 @@ for url in urls:
     news_list = soup.find("ul", class_="news-list").find_all ("a")#获取新闻列表
     
     for news in  news_list:
-        news_link = domain2 + news.attrs['href']   #详情页的url        
+        news_link = domain + news.attrs['href']   #详情页的url        
         news_title = news.get_text()  #新闻的标题
         news_detail = get_text(news_link)
         
@@ -120,7 +117,7 @@ for url in urls:
 
 # # 4.生成RSS的xml文件
 
-# In[14]:
+# In[11]:
 
 
 #该函数使用新闻的标题、链接、新闻内容，生成 PyRSS2Gen.RSS2函数所需要的参数 items
@@ -133,8 +130,8 @@ def gen_rssitems(news_titles,news_links,news_details):
          title = news_titles[i],
          link = news_links[i],
 
-         #description = news_details[i],
-         description = news_titles[i],
+         description = news_details[i],
+         #description = news_titles[i],
          pubDate =pubDate_now)
         
         rssitems.append(rssitem)
@@ -142,19 +139,31 @@ def gen_rssitems(news_titles,news_links,news_details):
         
 
 
-# In[ ]:
+# In[14]:
 
 
 if __name__ == '__main__':
     rss = PyRSS2Gen.RSS2(
-    title = "feed of renmrb",
+    title = "人民日报",
     link = "http://paper.people.com.cn/",
-    description = " everyday's news of renmrb ",
+    description = " 人民日报每日重要新闻 ",
 
 
     lastBuildDate = datetime.datetime.now(),
 
     items =gen_rssitems(news_titles,news_links,news_details))
-    rss.write_xml(open("renmrb.xml", "w",encoding='UTF-16'))
+    rss.write_xml(open("./home/renmrb.xml", "w",encoding='UTF-16'))
+
+
+# In[ ]:
+
+
+
     
+
+
+# In[ ]:
+
+
+
 
