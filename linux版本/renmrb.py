@@ -53,7 +53,7 @@ spaces2 = ["01.htm","02.htm","03.htm","04.htm","05.htm"] #周末新闻版面类�
 if weekday in [5,6]:
     spaces = spaces2 
 else:
-    spaces = spaces21
+    spaces = spaces1
 
 urls =[]
 

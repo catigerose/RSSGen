@@ -12,6 +12,7 @@ from bs4 import BeautifulSoup
 from datetime import date
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 
 
 # # 获取页面的数据、静态、动态的 最终输出结果都是一个soup。
@@ -30,15 +31,17 @@ def get_soup_ajax(url):
     
     user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0.3 Safari/605.1.15"
     options.add_argument('--user-agent=%s' % user_agent)
-    
-    driver = webdriver.Chrome( executable_path=chromedriver_path, options=options)#新建driver
+
+    # 函数更新，使用service传参数，解决警告 DeprecationWarning: executable_path has been deprecated, please pass in a Service object
+    s = Service(chromedriver_path)
+    driver = webdriver.Chrome( service=s, options=options)#新建driver
     driver.maximize_window() #最大化窗口
     
     driver.get(url) #获取页面内容
     #time.sleep(5)    #等待5s，等待加载完成
        
     page_source = driver.page_source #获取页面源码数据  
-    soup = BeautifulSoup(page_source )  #用 BeautifulSoup解析
+    soup = BeautifulSoup(page_source,features="lxml" )  #用 BeautifulSoup解析
     driver.close()
     return soup
 
