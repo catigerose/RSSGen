@@ -1,16 +1,12 @@
 #!/usr/bin/env python
 # coding: utf-8
-import datetime
-import PyRSS2Gen
-import requests
-import platform
-import time
-from bs4 import BeautifulSoup
-from datetime import date
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
+from PyRSS2Gen import RSS2
+from datetime import datetime
+from platform import system
 from rss_funcs import get_soup,gen_rssitems,get_rss_path
+
+
+
 
 
 
@@ -22,7 +18,7 @@ if __name__ == '__main__':
     news_links = []
     news_titles=[]
     news_details = []  
-    rss_dir = get_rss_path(platform.system())
+    rss_dir = get_rss_path(system())
     is_ajax = True    #是否为动态页面。对于静态网站：True时也能正常运行，但false会更快更省服务器资源。
     chromedriver_path = rss_dir+'/chromedriver'   #chromedriver的存放位置
 
@@ -58,11 +54,11 @@ for news in news_list:
     news_links.append(news_link)
     news_titles.append(news_title)
     news_details.append(news_detail)
-rss = PyRSS2Gen.RSS2(
+rss = RSS2(
 title = rss_title,
 link = url,
 description = rss_description,
-lastBuildDate = datetime.datetime.now(),
+lastBuildDate = datetime.now(),
 items =gen_rssitems(news_titles,news_links,news_details))
 rss.write_xml(open(rss_path, "w",encoding='UTF-16'))
 

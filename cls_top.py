@@ -1,14 +1,10 @@
-import datetime
-import PyRSS2Gen
-import requests
-import platform
-import time
-from bs4 import BeautifulSoup
-from datetime import date
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
+from PyRSS2Gen import RSS2
+from datetime import datetime
+from platform import system
 from rss_funcs import get_soup,gen_rssitems,get_rss_path
+import requests
+from bs4 import BeautifulSoup
+import time
 
 #该函数获取详情页的新闻内容
 def get_text(news_link):
@@ -28,7 +24,7 @@ if __name__ == '__main__':
     news_links = []
     news_titles=[]
     news_details = []  
-    rss_dir = get_rss_path(platform.system())
+    rss_dir = get_rss_path(system())
     is_ajax = True    #是否为动态页面。对于静态网站：True时也能正常运行，但false会更快更省服务器资源。
     chromedriver_path = rss_dir+'/chromedriver'   #chromedriver的存放位置
     
@@ -43,10 +39,12 @@ if __name__ == '__main__':
     rss_path =rss_dir+ "/feeds/"+      "cls_top.xml" #生成的RSS存放位置
     url = 'https://www.cls.cn/depth?id=1000'  #要爬取的页面  
     soup = get_soup(url,is_ajax,chromedriver_path) #网页的内容，返回bs4的soup文件   
-    news_list= soup.find_all("div", class_="clearfix b-c-e6e7ea subject-interest-list") # 找到或精确 items位置  ，防止抓到其它版面内容  
+    news_list= soup.find_all("div", class_="clearfix b-c-e6e7ea subject-interest-list") # 找到或精确 items位置 
+    #print(news_list ) 
     for news in news_list:
         news_link="https://www.cls.cn"+news.a.attrs['href']   #详情页的url        
         news_title = news.div.div.a.get_text()  #新闻的标题
+        #print(news_title)
         #news_detail = get_text(news_link)  
         news_detail = news_title  
         
@@ -60,10 +58,10 @@ if __name__ == '__main__':
         news_links.append(news_link)
         news_titles.append(news_title)
         news_details.append(news_detail)    
-    rss = PyRSS2Gen.RSS2(
+    rss = RSS2(
     title = rss_title,
     link = url,
     description = rss_description,
-    lastBuildDate = datetime.datetime.now(),
+    lastBuildDate = datetime.now(),
     items =gen_rssitems(news_titles,news_links,news_details))
     rss.write_xml(open(rss_path, "w",encoding='UTF-16'))

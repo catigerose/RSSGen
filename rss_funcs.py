@@ -1,12 +1,11 @@
 
-import datetime
-import PyRSS2Gen
+from datetime import datetime
+from PyRSS2Gen import RSSItem
 import requests
 import time
-import platform
 from bs4 import BeautifulSoup
-from datetime import date
-from selenium import webdriver
+
+from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 
@@ -28,7 +27,7 @@ def get_soup_ajax(url,chromedriver_path):
 
     # 函数更新，使用service传参数，解决警告 DeprecationWarning: executable_path has been deprecated, please pass in a Service object
     s = Service(chromedriver_path)
-    driver = webdriver.Chrome( service=s, options=options)#新建driver
+    driver = Chrome( service=s, options=options)#新建driver
     driver.maximize_window() #最大化窗口
     
     driver.get(url) #获取页面内容
@@ -48,7 +47,7 @@ def get_soup_static(url):
     headers = { "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36",}
     ret = requests.get(url,headers=headers)
     ret.encoding = ret.apparent_encoding 
-    #time.sleep(1)    
+    time.sleep(1)    
     soup = BeautifulSoup(ret.text, 'html.parser') # 构建beautifulsoup实例
     return soup
     
@@ -67,11 +66,11 @@ def get_soup(url,is_ajax,chromedriver_path):
 
 #该函数使用新闻的标题、链接、新闻内容，生成 PyRSS2Gen.RSS2函数所需要的参数 items
 def gen_rssitems(news_titles,news_links,news_details):
-    pubDate_now =datetime.datetime.now()
+    pubDate_now = datetime.now()
     rssitems=[]
     
     for i in range(len(news_titles)):
-        rssitem = PyRSS2Gen.RSSItem(
+        rssitem = RSSItem(
          title = news_titles[i],
          link = news_links[i],
 
