@@ -14,10 +14,8 @@
 
 	4. RSS 生成器 的作用就是 修改、更新xml文件
 
-	5. RSS服务器定时获取RSS的更新内容，并保存。 
-该服务器可以是本地客户端、服务器提高商如inoreader，或自行搭建的RSS服务如tiny tiny rss。
-云端的rss服务可以实现24小时抓取，其中tiny rss可自行设定更新时间，inoreader免费版无法定制更新时间，本地客户端如不24小时后台运行，可能会漏掉信息。
+	5. RSS服务器定时获取RSS的更新内容，并保存。 该服务器可以是本地客户端、服务器提高商如inoreader，或自行搭建的RSS服务如tiny tiny rss。云端的rss服务可以实现24小时抓取，其中tiny rss可自行设定更新时间，inoreader免费版无法定制更新时间，本地客户端如不24小时后台运行，可能会漏掉信息。
 
 	6. RSS阅读器具有附加功能如全文阅读等  其可使用RSS服务商的api端口，其也可做本地RSS服务器，
 
-无论是官方RSS，RSShub，https://politepol.com/en/ 、huginn、python ，其整体运行框架均是如此。![image](https://user-images.githubusercontent.com/67047102/201942566-96c7786a-69b3-4146-b81d-e8ce3fa6fa5b.png)
+无论是官方RSS，RSShub，https://politepol.com/en/ 、huginn、python ，其整体运行框架均是如此。
