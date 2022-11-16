@@ -49,8 +49,8 @@ if __name__ == '__main__':
 
     # 找到或精确 items位置  ，防止抓到其它版面内容
     news_list = soup.find_all("li", class_="news-li")
-
-    for news in news_list:
+    # 40条即可，提高抓取频率，减少抓取数量
+    for news in news_list[:40]:
         news_link = news.a.attrs['href']  # 详情页的url
         news_title = news.a.div.h3.get_text()  # 新闻的标题
         news_detail = get_text(news_link)
