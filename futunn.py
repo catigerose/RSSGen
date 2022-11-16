@@ -18,8 +18,8 @@ def get_text(news_link):
     detialHtml = requests.get(news_link, headers=headers)
     detialHtml.encoding = detialHtml.apparent_encoding
     soup = BeautifulSoup(detialHtml.text, 'html.parser')  # 构建beautifulsoup实例
-    if soup.find("div", class_="inner zh-cn origin_content"):  # 获取新闻内容详情
-        news_detail = soup.find("div", class_="inner zh-cn origin_content")
+    if soup.find("div", class_="main"):  # 获取新闻内容详情
+        news_detail = soup.find("div", class_="main")
     else:
         news_detail = soup.body  # 直接将详情页body做为新闻详情
         # news_detail = soup #直接将详情页body做为新闻详情
@@ -50,7 +50,7 @@ if __name__ == '__main__':
     # 找到或精确 items位置  ，防止抓到其它版面内容
     news_list = soup.find_all("li", class_="news-li")
     # 40条即可，提高抓取频率，减少抓取数量
-    for news in news_list[:40]:
+    for news in news_list[:10]:
         news_link = news.a.attrs['href']  # 详情页的url
         news_title = news.a.div.h3.get_text()  # 新闻的标题
         news_detail = get_text(news_link)
