@@ -61,7 +61,7 @@ if __name__ == '__main__':
         news_detail, source = get_text_source(news_link)
 
         # 过滤一些报道
-        filter_strings = ["智通财经", "华尔街见闻"]
+        filter_strings = ["智通财经", "华尔街见闻","格隆汇"]
         filter_results = []
         for str in filter_strings:
             filter_result = source.find(str) == -1

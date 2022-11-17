@@ -2,23 +2,10 @@ from PyRSS2Gen import RSS2
 from datetime import datetime
 from platform import system
 from rss_funcs import get_soup, gen_rssitems, get_rss_path
-import requests
-from bs4 import BeautifulSoup
-import time
+
 
 # 该函数获取详情页的新闻内容
 
-
-def get_text(news_link):
-    headers = {
-        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36", }
-    detialHtml = requests.get(news_link, headers=headers)
-    detialHtml.encoding = detialHtml.apparent_encoding
-    soup = BeautifulSoup(detialHtml.text, 'html.parser')  # 构建beautifulsoup实例
-    # news_detail = soup.find("div", class_="main").decode()#获取新闻内容详情
-    news_detail = soup.body.decode()  # 直接将详情页body做为新闻详情
-    time.sleep(3)  # 间隔时间防止反爬虫
-    return news_detail
 
 
 # # 4.生成RSS的xml文件
@@ -42,9 +29,7 @@ if __name__ == '__main__':
     for news in news_list:
         news_link = "https://www.cls.cn"+news.a.attrs['href']  # 详情页的url
         news_title = news.div.div.a.get_text()  # 新闻的标题
-        # print(news_title)
-        news_detail = get_text(news_link)
-        #news_detail = news_title
+        news_detail = news_title
 
         news_links.append(news_link)
         news_titles.append(news_title)

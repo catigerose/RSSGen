@@ -19,6 +19,7 @@ def get_soup_ajax(url, chromedriver_path):
     options.add_argument("headless")  # 不打开浏览器窗口 运行selenium
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
+    options.add_argument("--disable-gpu")
     # options.add_argument("--remote-debugging-port=9222")  # this
 
     user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0.3 Safari/605.1.15"
@@ -30,7 +31,7 @@ def get_soup_ajax(url, chromedriver_path):
     driver.maximize_window()  # 最大化窗口
 
     driver.get(url)  # 获取页面内容
-    time.sleep(3)  # 等待5s，等待加载完成
+    time.sleep(1.5)  # 等待5s，等待加载完成
 
     page_source = driver.page_source  # 获取页面源码数据
     soup = BeautifulSoup(page_source, features="lxml")  # 用 BeautifulSoup解析
