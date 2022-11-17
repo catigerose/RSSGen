@@ -3,26 +3,18 @@
 from PyRSS2Gen import RSS2
 from datetime import datetime
 from platform import system
-from rss_funcs import get_soup, gen_rssitems, get_rss_path
-import requests
-from bs4 import BeautifulSoup
+from rss_funcs import get_soup, gen_rssitems, get_rss_path, get_soup_static
 import time
 
 
 # 该函数获取详情页的新闻内容
 def get_text_source(news_link):
-    headers = {
-        "user_agent": ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                       "AppleWebKit/537.36 (KHTML, like Gecko) "
-                       "Chrome/105.0.0.0 Safari/537.36"), }
-    detialHtml = requests.get(news_link, headers=headers)
-    detialHtml.encoding = detialHtml.apparent_encoding
-    detail_soup = BeautifulSoup(
-        detialHtml.text, 'html.parser')  # 构建beautifulsoup实例
+
+    detail_soup = get_soup_static(news_link)   # 构建beautifulsoup实例
     if detail_soup.find("div", id="content"):  # 获取新闻内容详情
         news_detail = detail_soup.find("div", id="content").decode()
     else:
-        news_detail = detail_soup.body.decode() # 直接将详情页body做为新闻详情
+        news_detail = detail_soup.body.decode()  # 直接将详情页body做为新闻详情
 
     if detail_soup.find("div", class_="ftEditor"):  # 获取新闻内容详情
         source = detail_soup.find("div", class_="ftEditor").get_text()
@@ -61,7 +53,7 @@ if __name__ == '__main__':
         news_detail, source = get_text_source(news_link)
 
         # 过滤一些报道
-        filter_strings = ["智通财经", "华尔街见闻","格隆汇"]
+        filter_strings = ["智通财经", "华尔街见闻", "格隆汇"]
         filter_results = []
         for str in filter_strings:
             filter_result = source.find(str) == -1
