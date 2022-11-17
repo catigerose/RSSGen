@@ -1,54 +1,60 @@
-import requests
-from bs4 import BeautifulSoup
-from datetime import datetime
-from rss_funcs import  gen_rssitems, get_rss_path
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Nov 18 01:27:11 2022
+
+@author: catig
+"""
+
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Nov 17 22:18:53 2022
+
+@author: catig
+"""
+
 from PyRSS2Gen import RSS2
+from datetime import datetime
 from platform import system
+from rss_funcs import get_soup_static, gen_rssitems, get_rss_path
+
+import time
 
 
+# 该函数获取详情页的新闻内容
+# 该函数获取详情页的新闻内容
+def get_text(news_link):
+    detail_soup = get_soup_static(news_link) # 构建beautifulsoup实例  
+    news_detail = detail_soup.find("div", class_="content_area").decode()
+    #news_detail = detail_soup.find("div", class_="g-article").decode()   
+    time.sleep(0.5)  # 间隔时间防止反爬虫
+    return news_detail
+
+# # 4.生成RSS的xml文件
 if __name__ == '__main__':
-    
-    
-    
-    
+    # 新闻标题、详情页、新闻内容链接 存入数组中
+    news_links = []
+    news_titles = []
+    news_details = []
     rss_dir = get_rss_path(system())
-    
+   
 
 
-
-    rss_title = "新闻联播文字版"  # rss的标题，会显示再rss阅读中
+    rss_title = "新闻联播"  # rss的标题，会显示再rss阅读中
+    rss_description = "《新闻联播》是中国中央电视台每日晚间播出的一档新闻节目，被称为“中国政坛的风向标”，节目宗旨为“宣传党和政府的声音，传播天下大事”。"  # rss的描述
     rss_path = rss_dir + "/feeds/" + "xwlb.xml"  # 生成的RSS存放位置
-    rss_description = "新闻联播文字版,央视新闻联播文字稿子,今天中央新闻联播直播完整版,中央电视台cctv新闻联播,新聞联播"  # rss的描述
+    url = 'http://tv.cctv.com/lm/xwlb/'  # 要爬取的页面
+    soup = get_soup_static(url)  # 网页的内容，返回bs4的soup文件
+    news_list = soup.find("div",class_="column_wrapper").find("ul",class_="rililist newsList").find_all("li")
+    
 
-    url = "https://cn.govopendata.com/xinwenlianbo/"
-    
-    headers = {"user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36",
-                   }
-    abstact_html = requests.get(url, headers=headers)
-    abstact_html.encoding = abstact_html.apparent_encoding
-    soup = BeautifulSoup(abstact_html.text, 'html.parser') 
-    
-    
-    new1 = soup.find("table",class_="table table-bordered").find("tr").td
-    
-    latsest_news_url = "https://cn.govopendata.com"+new1.a.attrs['href'] 
-    
-    abstacts = new1.ul.decode()
-    
-    title = new1.a.get_text()
-    
-    
-    detialHtml = requests.get(latsest_news_url, headers=headers)
-    detialHtml.encoding = detialHtml.apparent_encoding
-    soup = BeautifulSoup(detialHtml.text, 'html.parser') 
-    
-    
-    detail = soup.find("div",class_="col-md-9 col-sm-12 heti").decode()
-    
-    news_links=[url,latsest_news_url]
-    news_titles=[title,title ]
-    news_details =[abstacts ,detail ]
+    for news in news_list[1:]:
+        news_link = news.a.attrs['href']  # 详情页的url
+        news_title = news.a.attrs['title']# 新闻的标题
+        news_detail= get_text(news_link)
 
+        news_links.append(news_link)
+        news_titles.append(news_title)
+        news_details.append(news_detail)
     rss = RSS2(
         title=rss_title,
         link=url,
@@ -56,4 +62,3 @@ if __name__ == '__main__':
         lastBuildDate=datetime.now(),
         items=gen_rssitems(news_titles, news_links, news_details))
     rss.write_xml(open(rss_path, "w", encoding='UTF-16'))
-

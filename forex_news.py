@@ -33,7 +33,7 @@ if __name__ == '__main__':
     chromedriver_path = rss_dir+'/chromedriver'  # chromedriver的存放位置
 
     
-    rss_title = "外汇新闻-英为才情"  # rss的标题，会显示再rss阅读中
+    rss_title = "外汇新闻-英为财情"  # rss的标题，会显示再rss阅读中
     rss_description = "外汇新闻快讯_外汇实时新闻资讯网_英为财情Investing.com"  # rss的描述
     rss_path = rss_dir + "/feeds/" + "forex_news.xml"  # 生成的RSS存放位置
     url = 'https://cn.investing.com/news/forex-news'  # 要爬取的页面

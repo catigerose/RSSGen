@@ -31,7 +31,7 @@ def get_soup_ajax(url, chromedriver_path):
     driver.maximize_window()  # 最大化窗口
 
     driver.get(url)  # 获取页面内容
-    time.sleep(1.5)  # 等待5s，等待加载完成
+    time.sleep(2)  # 等待5s，等待加载完成
 
     page_source = driver.page_source  # 获取页面源码数据
     soup = BeautifulSoup(page_source, features="lxml")  # 用 BeautifulSoup解析
