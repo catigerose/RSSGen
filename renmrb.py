@@ -18,9 +18,7 @@ def get_text(news_link):
     detialHtml = requests.get(news_link, headers=headers)
     detialHtml.encoding = detialHtml.apparent_encoding
     soup = BeautifulSoup(detialHtml.text, 'html.parser')  # 构建beautifulsoup实例
-    news_detail = soup.find("div", class_="article")  # 获取新闻内容详情
-    news_detail = news_detail.text
-    return news_detail
+    return  soup.find("div", class_="article").decode()  # 获取新闻内容详情
 
 
 if __name__ == '__main__':
@@ -66,13 +64,32 @@ if __name__ == '__main__':
         soup = get_soup(url0, is_ajax, chromedriver_path)  # 网页的内容，返回bs4的soup文件
         news_list = soup.find("ul", class_="news-list").find_all("a")  # 获取新闻列表
         for news in news_list:
-            news_link = domain + news.attrs['href']  # 详情页的url
-            news_title = news.get_text()  # 新闻的标题
-            news_detail = get_text(news_link)
 
-            news_links.append(news_link)
-            news_titles.append(news_title)
-            news_details.append(news_detail)
+
+            news_title = news.get_text()  # 新闻的标题
+            
+            # 过滤一些报道
+            filter_strings =["责编","图片报道","广告"]
+            filter_results=[]
+            for str in filter_strings:
+                filter_result=  news_title.find(str)==-1
+                filter_results.append(filter_result)
+                
+        
+            if False in filter_results :
+                pass
+            else:
+                
+                
+                
+                news_link = domain + news.attrs['href']  # 详情页的url
+                news_detail = get_text(news_link)             
+    
+                
+    
+                news_links.append(news_link)
+                news_titles.append(news_title)
+                news_details.append(news_detail)
 
     rss = RSS2(
         title=rss_title,

@@ -27,7 +27,7 @@ if __name__ == '__main__':
     news_list = soup.find_all("li", style="cursor: pointer;")
     for news in news_list:
         news_link = url  # 详情页的url
-        news_detail = news.p.get_text()+"   "+news.span.get_text()
+        news_detail = news.p.decode()  +"   "+news.span.decode()  
 
         if news.h3.get_text() == '':
             news_title = news.p.get_text()

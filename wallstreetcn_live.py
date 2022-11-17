@@ -30,9 +30,9 @@ news_list = soup.find_all("div", class_="live-item")
 for news in news_list:
     news_link = news.a.attrs['href']  # 详情页的url
     try:
-        news_detail = news.div.div.p.get_text()
+        news_detail = news.div.div.p.decode()  
     except:
-        news_detail = news.div.div.get_text()
+        news_detail = news.div.div.decode()  
 
     news_title = news_detail  # 新闻的标题
 
