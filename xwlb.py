@@ -24,7 +24,10 @@ import time
 # 该函数获取详情页的新闻内容
 def get_text(news_link):
     detail_soup = get_soup_static(news_link) # 构建beautifulsoup实例  
-    news_detail = detail_soup.find("div", class_="content_area").decode()
+    if detail_soup.find("div", class_="content_area"):
+        news_detail = detail_soup.find("div", class_="content_area").decode()
+    else:   
+        news_detail = detail_soup.body.decode()
     #news_detail = detail_soup.find("div", class_="g-article").decode()   
     time.sleep(0.5)  # 间隔时间防止反爬虫
     return news_detail

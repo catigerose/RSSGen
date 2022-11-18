@@ -21,7 +21,7 @@ def get_text_source(news_link):
     else:
         source = "未显示来源"  # 直接将详情页body做为新闻详情
 
-    time.sleep(1)  # 间隔时间防止反爬虫
+    time.sleep(0.5)  # 间隔时间防止反爬虫
     return news_detail, source
 
 
