@@ -44,10 +44,11 @@ if __name__ == '__main__':
 
     for news in news_list:
         news_link = "https://cn.investing.com"+news.a.attrs['href']  # 详情页的url
-        news_title = news.div.get_text()  # 新闻的标题
+        news_title = news.div.a.get_text()  # 新闻的标题
         # print(news_title)
         #news_detail = get_soup(news_link,True, chromedriver_path).find("div", class_="WYSIWYG articlePage").decode()
-        news_detail = news_title
+        news_detail = news.div.get_text()
+
 
         news_links.append(news_link)
         news_titles.append(news_title)
