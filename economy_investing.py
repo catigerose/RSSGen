@@ -52,4 +52,4 @@ if __name__ == '__main__':
         description=rss_description,
         lastBuildDate=datetime.now(),
         items=gen_rssitems(news_titles, news_links, news_details))
-    rss.write_xml(open(rss_path, "w", encoding='UTF-16'))
+    rss.write_xml(open(rss_path, "w", encoding='UTF-8'),encoding='UTF-8')
