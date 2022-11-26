@@ -3,7 +3,7 @@
 from PyRSS2Gen import RSS2
 from datetime import datetime
 from platform import system
-from rss_funcs import get_soup, gen_rssitems, get_rss_path
+from rss_funcs import get_soup, gen_rssitems_live, get_rss_path
 
 
 # # 4.生成RSS的xml文件
@@ -48,5 +48,5 @@ if __name__ == '__main__':
         link=url,
         description=rss_description,
         lastBuildDate=datetime.now(),
-        items=gen_rssitems(news_titles, news_links, news_details))
+        items=gen_rssitems_live(news_titles, news_links, news_details))
     rss.write_xml(open(rss_path, "w", encoding='UTF-8'),encoding='UTF-8')

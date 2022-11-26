@@ -68,7 +68,25 @@ def gen_rssitems(news_titles, news_links, news_details):
         rssitem = RSSItem(
             title=news_titles[i],
             link=news_links[i],
-            guid = Guid(news_links[i]+news_titles[i]),
+            guid = Guid(news_links[i]),
+            description=news_details[i],
+            #description = news_titles[i],
+            pubDate=datetime.now())
+
+        rssitems.append(rssitem)
+    return rssitems
+
+
+# 该函数使用新闻的标题、链接、新闻内容，生成 PyRSS2Gen.RSS2函数所需要的参数 items
+def gen_rssitems_live(news_titles, news_links, news_details):
+
+    rssitems = []
+
+    for i in range(len(news_titles)):
+        rssitem = RSSItem(
+            title=news_titles[i],
+            link=news_links[i],
+            guid = Guid(news_titles[i],isPermaLink=0),
             description=news_details[i],
             #description = news_titles[i],
             pubDate=datetime.now())
