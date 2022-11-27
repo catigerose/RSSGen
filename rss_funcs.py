@@ -1,6 +1,6 @@
 
 from datetime import datetime
-from PyRSS2Gen import RSSItem,Guid
+from PyRSS2Gen import RSSItem, Guid
 import requests
 import time
 from bs4 import BeautifulSoup
@@ -68,7 +68,7 @@ def gen_rssitems(news_titles, news_links, news_details):
         rssitem = RSSItem(
             title=news_titles[i],
             link=news_links[i],
-            guid = Guid(news_links[i]),
+            guid=Guid(news_links[i]),
             description=news_details[i],
             #description = news_titles[i],
             pubDate=datetime.now())
@@ -86,7 +86,7 @@ def gen_rssitems_live(news_titles, news_links, news_details):
         rssitem = RSSItem(
             title=news_titles[i],
             link=news_links[i],
-            guid = Guid(news_titles[i],isPermaLink=0),
+            guid=Guid(news_titles[i], isPermaLink=0),
             description=news_details[i],
             #description = news_titles[i],
             pubDate=datetime.now())
@@ -94,15 +94,22 @@ def gen_rssitems_live(news_titles, news_links, news_details):
         rssitems.append(rssitem)
     return rssitems
 
-# 获取当前工作目录
+ # linux和window的chromedirver、rssfeed路径不同，此函数使python程序可以跨平台运行，方便windows下调试代码
 
 
-def get_rss_path(platform_system):
+def get_chromedriver_feeds_path(platform_system):
+    
     if platform_system == 'Linux':
-        rss_path = "/home/rss"
+        chromedriver_path = "/home/rss/chromedriver"
+        feeds_dir = "/var/www/html/"
+
     elif platform_system == 'Windows':
-        rss_path = "."
+        chromedriver_path = "./chromedriver"
+        feeds_dir = "./feeds/"
+
     else:
         print("waring： platform.system is not linux or windows")
-        rss_path = "."
-    return rss_path
+        chromedriver_path = "./chromedriver"
+        feeds_dir = "./feeds/"
+
+    return chromedriver_path, feeds_dir

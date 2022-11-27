@@ -8,7 +8,7 @@ Created on Thu Nov 17 22:18:53 2022
 from PyRSS2Gen import RSS2
 from datetime import datetime
 from platform import system
-from rss_funcs import get_soup_static, gen_rssitems, get_rss_path
+from rss_funcs import get_soup_static, gen_rssitems, get_chromedriver_feeds_path
 
 import time
 
@@ -33,11 +33,12 @@ if __name__ == '__main__':
     news_links = []
     news_titles = []
     news_details = []
-    rss_dir = get_rss_path(system())
+    
+    chromedriver_path, feeds_dir = get_chromedriver_feeds_path(system())# chromedriver的存放位置
 
     rss_title = "要闻-每日经济新闻"  # rss的标题，会显示再rss阅读中
     rss_description = "每经网是24小时新闻网站，依托新锐财经日报《每日经济新闻》打造中国具有影响力的新闻网站，覆盖品牌价值、汽车资讯、视频、基金、财经、房产、金融新闻、券商、公司等方向，是全方位财经新闻平台。"  # rss的描述
-    rss_path = rss_dir + "/feeds/" + "nbd.xml"  # 生成的RSS存放位置
+    feed_path = feeds_dir + "nbd.xml"  # 生成的RSS存放位置
     url = 'http://www.nbd.com.cn/columns/3/'  # 要爬取的页面
     soup = get_soup_static(url)  # 网页的内容，返回bs4的soup文件
     news_list = soup.find(
@@ -57,4 +58,4 @@ if __name__ == '__main__':
         description=rss_description,
         lastBuildDate=datetime.now(),
         items=gen_rssitems(news_titles, news_links, news_details))
-    rss.write_xml(open(rss_path, "w", encoding='UTF-8'),encoding='UTF-8')
+    rss.write_xml(open(feed_path, "w", encoding='UTF-8'),encoding='UTF-8')

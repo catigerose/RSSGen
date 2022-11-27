@@ -15,7 +15,7 @@ Created on Thu Nov 17 18:15:54 2022
 from PyRSS2Gen import RSS2
 from datetime import datetime
 from platform import system
-from rss_funcs import get_soup, gen_rssitems, get_rss_path
+from rss_funcs import get_soup, gen_rssitems,get_chromedriver_feeds_path
 
 
 
@@ -28,14 +28,13 @@ if __name__ == '__main__':
     news_links = []
     news_titles = []
     news_details = []
-    rss_dir = get_rss_path(system())
-    is_ajax = True # 是否为动态页面。对于静态网站：True时也能正常运行，但false会更快更省服务器资源。
-    chromedriver_path = rss_dir+'/chromedriver'  # chromedriver的存放位置
+    is_ajax = True  # 是否为动态页面。对于静态网站：True时也能正常运行，但false会更快更省服务器资源。
+    chromedriver_path, feeds_dir = get_chromedriver_feeds_path(system())# chromedriver的存放位置
 
     
     rss_title = "全球宏观经济指标-英为财情"  # rss的标题，会显示再rss阅读中
     rss_description = "全球宏观经济指标新闻报道_最新财经数据资讯_英为财情Investing.com"  # rss的描述
-    rss_path = rss_dir + "/feeds/" + "economic_indicators.xml"  # 生成的RSS存放位置
+    feed_path = feeds_dir  + "economic_indicators.xml"  # 生成的RSS存放位置
     url = 'https://cn.investing.com/news/economic-indicators'  # 要爬取的页面
     soup = get_soup(url, is_ajax, chromedriver_path).find(
         "section", id="leftColumn")  # 网页的内容，返回bs4的soup文件
@@ -59,4 +58,4 @@ if __name__ == '__main__':
         description=rss_description,
         lastBuildDate=datetime.now(),
         items=gen_rssitems(news_titles, news_links, news_details))
-    rss.write_xml(open(rss_path, "w", encoding='UTF-8'),encoding='UTF-8')
+    rss.write_xml(open(feed_path, "w", encoding='UTF-8'),encoding='UTF-8')

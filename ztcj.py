@@ -15,7 +15,7 @@ Created on Thu Nov 17 22:18:53 2022
 from PyRSS2Gen import RSS2
 from datetime import datetime
 from platform import system
-from rss_funcs import get_soup_static, gen_rssitems, get_rss_path
+from rss_funcs import get_soup_static, gen_rssitems, get_chromedriver_feeds_path
 
 import time
 
@@ -39,11 +39,12 @@ if __name__ == '__main__':
     news_links = []
     news_titles = []
     news_details = []
-    rss_dir = get_rss_path(system())
+
+    chromedriver_path, feeds_dir = get_chromedriver_feeds_path(system())# chromedriver的存放位置
 
     rss_title = "要闻-智通财经"  # rss的标题，会显示再rss阅读中
     rss_description = "智通财经网，连线全球资本市场，提供最及时的全球财经市场资讯，覆盖港股、美股、A股的资讯、行情、数据、H股，港股公司，香港股市，恒生指数，国企指数，港股开户，蓝筹股，红筹股，AH， 窝轮等"  # rss的描述
-    rss_path = rss_dir + "/feeds/" + "ztcj.xml"  # 生成的RSS存放位置
+    feed_path = feeds_dir + "ztcj.xml"  # 生成的RSS存放位置
     url = 'https://www.zhitongcaijing.com/?index=yaowen'  # 要爬取的页面
     soup = get_soup_static(url)  # 网页的内容，返回bs4的soup文件
     news_list = soup.find(
@@ -63,4 +64,4 @@ if __name__ == '__main__':
         description=rss_description,
         lastBuildDate=datetime.now(),
         items=gen_rssitems(news_titles, news_links, news_details))
-    rss.write_xml(open(rss_path, "w", encoding='UTF-8'),encoding='UTF-8')
+    rss.write_xml(open(feed_path, "w", encoding='UTF-8'),encoding='UTF-8')

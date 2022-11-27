@@ -6,7 +6,7 @@
 import requests
 from bs4 import BeautifulSoup
 from datetime import date, datetime
-from rss_funcs import get_soup, gen_rssitems, get_rss_path
+from rss_funcs import get_soup, gen_rssitems, get_chromedriver_feeds_path
 from PyRSS2Gen import RSS2
 from platform import system
 
@@ -26,13 +26,12 @@ if __name__ == '__main__':
     news_links = []
     news_titles = []
     news_details = []
-    rss_dir = get_rss_path(system())
     is_ajax = False  # 是否为动态页面。对于静态网站：True时也能正常运行，但false会更快更省服务器资源。
-    chromedriver_path = rss_dir+'/chromedriver'  # chromedriver的存放位置
+    chromedriver_path, feeds_dir = get_chromedriver_feeds_path(system())# chromedriver的存放位置
 
     rss_title = "人民日报"  # rss的标题，会显示再rss阅读中
     rss_description = "人民日报每日重要新闻"  # rss的描述
-    rss_path = rss_dir + "/feeds/" + "renmrb.xml"  # 生成的RSS存放位置
+    feed_path = feeds_dir + "renmrb.xml"  # 生成的RSS存放位置
     url = "http://paper.people.com.cn/"  # 要爬取的页面
 
     # 1. 获取今天的日期（年，月，日）
@@ -97,4 +96,4 @@ if __name__ == '__main__':
         description=rss_description,
         lastBuildDate=datetime.now(),
         items=gen_rssitems(news_titles, news_links, news_details))
-    rss.write_xml(open(rss_path, "w", encoding='UTF-8'),encoding='UTF-8')
+    rss.write_xml(open(feed_path, "w", encoding='UTF-8'),encoding='UTF-8')

@@ -3,20 +3,19 @@
 from PyRSS2Gen import RSS2
 from datetime import datetime
 from platform import system
-from rss_funcs import get_soup, gen_rssitems, get_rss_path
+from rss_funcs import get_soup, gen_rssitems, get_chromedriver_feeds_path
 
 
 if __name__ == '__main__':
     # 新闻标题、详情页、新闻内容链接 存入数组中
     news_links = []
     news_titles = []
-    news_details = []
-    rss_dir = get_rss_path(system())
+    news_details = []    
     is_ajax = True  # 是否为动态页面。对于静态网站：True时也能正常运行，但false会更快更省服务器资源。
-    chromedriver_path = rss_dir+'/chromedriver'  # chromedriver的存放位置
+    chromedriver_path, feeds_dir = get_chromedriver_feeds_path(system())# chromedriver的存放位置
 
 
-rss_path = rss_dir + "/feeds/" + "wallstreetcn_live.xml"  # 生成的RSS存放位置
+feed_path = feeds_dir  + "wallstreetcn_live.xml"  # 生成的RSS存放位置
 url = 'https://wallstreetcn.com/live/global'  # 要爬取的页面
 rss_title = "华尔街见闻-快讯"  # rss的标题，会显示再rss阅读中
 rss_description = "华尔街见闻实时新闻，7*24金融资讯，不仅更快还要你懂，华尔街，财经数据，24小时资讯，7x24快讯，财经资讯，市场直播，黄金，黄金价格，原油，外汇，A股，美股，商品，股市"  # rss的描述
@@ -45,4 +44,4 @@ rss = RSS2(
     description=rss_description,
     lastBuildDate=datetime.now(),
     items=gen_rssitems(news_titles, news_links, news_details))
-rss.write_xml(open(rss_path, "w", encoding='UTF-8'),encoding='UTF-8')
+rss.write_xml(open(feed_path, "w", encoding='UTF-8'),encoding='UTF-8')

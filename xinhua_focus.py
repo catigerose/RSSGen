@@ -8,7 +8,7 @@ Created on Thu Nov 17 22:18:53 2022
 from PyRSS2Gen import RSS2
 from datetime import datetime
 from platform import system
-from rss_funcs import get_soup_static, gen_rssitems, get_rss_path
+from rss_funcs import get_soup_static, gen_rssitems, get_chromedriver_feeds_path
 
 import time
 
@@ -32,11 +32,12 @@ if __name__ == '__main__':
     news_links = []
     news_titles = []
     news_details = []
-    rss_dir = get_rss_path(system())
+
+    chromedriver_path, feeds_dir = get_chromedriver_feeds_path(system())# chromedriver的存放位置
 
     rss_title = "新华网_要闻"  # rss的标题，会显示再rss阅读中
     rss_description = "中国主要重点新闻网站,依托新华社遍布全球的采编网络,记者遍布世界100多个国家和地区,地方频道分布全国31个省市自治区,每天24小时同时使用6种语言滚动发稿,权威、准确、及时播发国内外重要新闻和重大突发事件,受众覆盖200多个国家和地区,发展论坛是全球知名的中文论坛。"  # rss的描述
-    rss_path = rss_dir + "/feeds/" + "xinhua_focus.xml"  # 生成的RSS存放位置
+    feed_path = feeds_dir + "xinhua_focus.xml"  # 生成的RSS存放位置
     url = 'http://www.xinhuanet.com/'  # 要爬取的页面
     soup = get_soup_static(url)  # 网页的内容，返回bs4的soup文件
 
@@ -58,4 +59,4 @@ if __name__ == '__main__':
         description=rss_description,
         lastBuildDate=datetime.now(),
         items=gen_rssitems(news_titles, news_links, news_details))
-    rss.write_xml(open(rss_path, "w", encoding='UTF-8'),encoding='UTF-8')
+    rss.write_xml(open(feed_path, "w", encoding='UTF-8'),encoding='UTF-8')

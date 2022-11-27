@@ -3,7 +3,7 @@
 from PyRSS2Gen import RSS2
 from datetime import datetime
 from platform import system
-from rss_funcs import get_soup, gen_rssitems, get_rss_path, get_soup_static
+from rss_funcs import get_soup, gen_rssitems, get_chromedriver_feeds_path, get_soup_static
 import time
 
 
@@ -32,13 +32,12 @@ if __name__ == '__main__':
     news_links = []
     news_titles = []
     news_details = []
-    rss_dir = get_rss_path(system())
     is_ajax = True  # 是否为动态页面。对于静态网站：True时也能正常运行，但false会更快更省服务器资源。
-    chromedriver_path = rss_dir+'/chromedriver'  # chromedriver的存放位置
+    chromedriver_path, feeds_dir = get_chromedriver_feeds_path(system())# chromedriver的存放位置
 
     url = 'https://news.futunn.com/main?lang=zh-cn'  # 要爬取的页面
     rss_title = "富途牛牛要闻"  # rss的标题，会显示再rss阅读中
-    rss_path = rss_dir + "/feeds/" + "futunn.xml"  # 生成的RSS存放位置
+    feed_path = feeds_dir  + "futunn.xml"  # 生成的RSS存放位置
     rss_description = "财经新闻_最新全球财经资讯报道 - 富途牛牛"  # rss的描述
 
     soup = get_soup(url, is_ajax, chromedriver_path)  # 网页的内容，返回bs4的soup文件
@@ -73,4 +72,4 @@ if __name__ == '__main__':
         description=rss_description,
         lastBuildDate=datetime.now(),
         items=gen_rssitems(news_titles, news_links, news_details))
-    rss.write_xml(open(rss_path, "w", encoding='UTF-8'),encoding='UTF-8')
+    rss.write_xml(open(feed_path, "w", encoding='UTF-8'),encoding='UTF-8')
