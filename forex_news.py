@@ -44,5 +44,5 @@ if __name__ == '__main__':
     if use_atom:
          fg.atom_file(feeds_dir+ feed_name)  # Write the ATOM feed to a file
     else:
-         fg.feed_file(feeds_dir+ feed_name)  # Write the RSS feed to a file
+         fg.rss_file(feeds_dir+ feed_name)  # Write the RSS feed to a file
 

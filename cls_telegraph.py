@@ -42,7 +42,7 @@ if __name__ == '__main__':
         news_details,
         feed_url=feeds_url + feed_name,
         guids=news_titles)     
-
+    use_atom = 0
     if use_atom:
         fg.atom_file(feeds_dir+ feed_name)  # Write the ATOM feed to a file
     else:

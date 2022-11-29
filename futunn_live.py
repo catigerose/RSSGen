@@ -30,6 +30,7 @@ if __name__ == '__main__':
         news_urls.append(news_url)
         news_titles.append(news_title)
         news_details.append(news_detail)
+
     # guids 唯一标记了entry，默认使用news_urls,news如无url，需要修改为news_titles   
     fg = gen_fg(
         website_url,
@@ -39,10 +40,11 @@ if __name__ == '__main__':
         news_titles,
         news_details,
         feed_url=feeds_url + feed_name,
-        guids="news_urls")     
-
+        guids=news_titles)     
+    
+    use_atom = 0
     if use_atom:
         fg.atom_file(feeds_dir+ feed_name)  # Write the ATOM feed to a file
     else:
-        fg.feed_file(feeds_dir+ feed_name)  # Write the RSS feed to a file
+        fg.rss_file(feeds_dir+ feed_name)  # Write the RSS feed to a file
 
