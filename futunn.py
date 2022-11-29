@@ -1,16 +1,10 @@
-#!/usr/bin/env python
-# coding: utf-8
-from PyRSS2Gen import RSS2
-from datetime import datetime
-from platform import system
-from rss_funcs import get_soup, gen_rssitems, get_chromedriver_feeds_path, get_soup_static
-import time
 
+from feed_funcs import use_atom,  get_soup, gen_fg, feeds_url, feeds_dir
 
 # 该函数获取详情页的新闻内容
-def get_text_source(news_link):
+def get_content(news_url):
 
-    detail_soup = get_soup_static(news_link)   # 构建beautifulsoup实例
+    detail_soup = get_soup(news_url)   # 构建beautifulsoup实例
     if detail_soup.find("div", id="content"):  # 获取新闻内容详情
         news_detail = detail_soup.find("div", id="content").decode()
     else:
@@ -20,36 +14,35 @@ def get_text_source(news_link):
         source = detail_soup.find("div", class_="ftEditor").get_text()
     else:
         source = "未显示来源"  # 直接将详情页body做为新闻详情
-
+    import time
     time.sleep(0.5)  # 间隔时间防止反爬虫
     return news_detail, source
 
 
-#  4.生成RSS的xml文件
+
 if __name__ == '__main__':
 
     # 新闻标题、详情页、新闻内容链接 存入数组中
-    news_links = []
+    news_urls = []
     news_titles = []
     news_details = []
-    is_ajax = True  # 是否为动态页面。对于静态网站：True时也能正常运行，但false会更快更省服务器资源。
-    chromedriver_path, feeds_dir = get_chromedriver_feeds_path(system())# chromedriver的存放位置
 
-    url = 'https://news.futunn.com/main?lang=zh-cn'  # 要爬取的页面
-    rss_title = "富途牛牛要闻"  # rss的标题，会显示再rss阅读中
-    feed_path = feeds_dir  + "futunn.xml"  # 生成的RSS存放位置
-    rss_description = "财经新闻_最新全球财经资讯报道 - 富途牛牛"  # rss的描述
 
-    soup = get_soup(url, is_ajax, chromedriver_path)  # 网页的内容，返回bs4的soup文件
+    website_url = 'https://news.futunn.com/main?lang=zh-cn'  # 要爬取的页面
+    feed_title = "富途牛牛要闻"  # feed的标题，会显示在feed阅读器中
+    feed_name =  "futunn.xml"  # feed xml文件的的名字
+    feed_description = "财经新闻_最新全球财经资讯报道 - 富途牛牛"  # feed的描述
+
+    soup = get_soup(website_url,1)  # 网页的内容，返回bs4的soup文件
 
     # 找到或精确 items位置  ，防止抓到其它版面内容
     news_list = soup.find_all("li", class_="news-li")
 
     # 40条即可，提高抓取频率，减少抓取数量
     for news in news_list[:40]:
-        news_link = news.a.attrs['href']  # 详情页的url
+        news_url = news.a.attrs['href']  # 详情页的url
         news_title = news.a.div.h3.get_text()  # 新闻的标题
-        news_detail, source = get_text_source(news_link)
+        news_detail, source = get_content(news_url)
 
         # 过滤一些报道
         filter_strings = ["智通财经", "华尔街见闻", "格隆汇"]
@@ -62,14 +55,22 @@ if __name__ == '__main__':
             pass
         else:
 
-            news_links.append(news_link)
+            news_urls.append(news_url)
             news_titles.append(news_title)
             news_details.append(news_detail)
-    # print(len(news_links))
-    rss = RSS2(
-        title=rss_title,
-        link=url,
-        description=rss_description,
-        lastBuildDate=datetime.now(),
-        items=gen_rssitems(news_titles, news_links, news_details))
-    rss.write_xml(open(feed_path, "w", encoding='UTF-8'),encoding='UTF-8')
+    # guids 唯一标记了entry，默认使用news_urls,news如无url，需要修改为news_titles   
+    fg = gen_fg(
+        website_url,
+        feed_title,
+        feed_description,
+        news_urls,
+        news_titles,
+        news_details,
+        feed_url=feeds_url + feed_name,
+        guids="news_urls")     
+
+    if use_atom:
+        fg.atom_file(feeds_dir+ feed_name)  # Write the ATOM feed to a file
+    else:
+        fg.feed_file(feeds_dir+ feed_name)  # Write the RSS feed to a file
+
