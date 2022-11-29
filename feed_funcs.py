@@ -92,7 +92,7 @@ def gen_fg(website_url, feed_title, feed_description, entry_urls, entry_titles, 
         fe = fg.add_entry()
 
         fe.title(entry_title)
-        fe.content(entry_detail)
+        fe.content(entry_detail,type="html")
         fe.link(href=entry_link)
         fe.id(id=guid)
         fe.updated(datetime.now(tz))
