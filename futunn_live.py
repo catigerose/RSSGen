@@ -7,10 +7,14 @@ if __name__ == '__main__':
     news_urls = []
     news_titles = []
     news_details = []
-
+    
+    # entry必须使用url作为唯一性的id，相同id entry rss阅读不会再抓取。
+    #直播类网站可能没有url，使用detail生成hash制作伪url。
+    from hashlib import md5
+    hash_details = []
 
     feed_name = "futunn_live.xml"  # feed xml文件的的名字
-    website_url = 'https://news.futunn.com/main/live?lang=zh-cn'  # 要爬取的页面
+    website_url = 'https://news.futunn.com/main/live?lang=zh-cn/'  # 要爬取的页面
     feed_title = "富途牛牛-直播"  # feed的标题，会显示在feed阅读器中
     feed_description = "7×24小时全球实时财经新闻快讯 - 富途牛牛"  # feed的描述
 
@@ -26,7 +30,10 @@ if __name__ == '__main__':
             news_title = news.p.get_text()
         else:
             news_title = news.h3.get_text()  # 新闻的标题
-
+            
+        hash_detail = website_url + md5(news_title.encode(encoding='utf-8')).hexdigest() 
+        hash_details.append(hash_detail)
+        
         news_urls.append(news_url)
         news_titles.append(news_title)
         news_details.append(news_detail)
@@ -40,9 +47,9 @@ if __name__ == '__main__':
         news_titles,
         news_details,
         feed_url=feeds_url + feed_name,
-        guids=news_titles)     
+        guids=hash_details)     
     
-    use_atom = 0
+
     if use_atom:
         fg.atom_file(feeds_dir+ feed_name)  # Write the ATOM feed to a file
     else:
