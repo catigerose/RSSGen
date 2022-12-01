@@ -1,11 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Nov 29 17:33:51 2022
-
-@author: catig
-"""
-
-from feed_funcs import use_atom,  get_soup, gen_fg, feeds_url, feeds_dir
+from feed_funcs import get_soup, gen_fg, feeds_url, feeds_dir, get_entrys, tz
+from datetime import datetime
 
 # 该函数获取详情页的新闻内容
 def get_content(news_url):
@@ -25,14 +19,17 @@ def get_content(news_url):
 
 
 if __name__ == '__main__':
-    # 新闻标题、详情页、新闻内容链接 存入数组中
-    news_urls = []
-    news_titles = []
-    news_details = []
+
     feed_title = "日经中文网"  # feed的标题，会显示在feed阅读器中
     feed_description = "日经中文网官方网站。日经中文网是日本经济新闻社的中文财经网站。提供日本、中国、欧美财经金融信息、商务、企业、高科技报道、评论和专栏。"  # feed的描述
     feed_name = "nikkei.xml"  # feed xml文件的的名字
     website_url = 'https://cn.nikkei.com'  # 要爬取的页面
+    
+    feed_path = feeds_dir + feed_name
+    feed_url = feeds_url + feed_name
+    titles, contents, links, guids, updateds, publisheds = get_entrys(  feed_path)
+    new_nums = 0
+    old_nums = len(guids) 
     
     
     soup = get_soup(website_url)
@@ -54,25 +51,29 @@ if __name__ == '__main__':
     
     for news in news_list:
         news_url = news.a.attrs['href']  # 详情页的url
-        news_title = news.a.get_text()  # 新闻的标题
-        news_detail = get_content(news_url)
+        guid = news_url
 
-        news_urls.append(news_url)
-        news_titles.append(news_title)
-        news_details.append(news_detail)
 
+        if guid not in guids:             
+            news_title = news.a.get_text()  # 新闻的标题
+            news_detail = get_content(news_url)
+            
+                      
+            new_nums += 1
+            titles.append(news_title)
+            contents.append(news_detail)
+            links.append(news_url)
+            guids.append(guid)
+            updateds.append(datetime.now(tz))
+            publisheds.append(datetime.now(tz))
+    truc = min(old_nums,new_nums) # 保证不漏掉新的内容，没有feed文件则新的全部写入，及限制entry数目
     # guids 唯一标记了entry，默认使用news_urls,news如无url，需要修改为news_titles
-    fg = gen_fg(
-        website_url,
-        feed_title,
-        feed_description,
-        news_urls,
-        news_titles,
-        news_details,
-        feed_url=feeds_url + feed_name,
-        guids="news_urls")
-
-    if use_atom:
-        fg.atom_file(feeds_dir + feed_name)  # Write the ATOM feed to a file
-    else:
-        fg.rss_file(feeds_dir + feed_name)  # Write the RSS feed to a file
+    fg = gen_fg(website_url, feed_title, feed_description, feed_url, 
+                titles, 
+                contents,
+                links,
+                guids,
+                updateds,
+                publisheds,
+                truc)
+    fg.atom_file(feed_path)  # Write the ATOM feed to a file

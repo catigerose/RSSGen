@@ -9,6 +9,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from feedgen.feed import FeedGenerator
 from pytz import timezone
+import feedparser
 
 # 根据操作系统指定工作目录，使代码在linux和windows都能运行。
 if system() == 'Linux':
@@ -20,12 +21,12 @@ else:
     work_dir = "."
 
 chromedriver_path = work_dir+'/chromedriver'  # chromedriver的路径
-use_atom = True  # 默认生成atom feed ,使用此变量方便批量修改所有feed。
+
 feeds_dir = work_dir + "/feeds/"   # feed 的存放目录
 feeds_url = "http://rss.catigerose.buzz/feeds/"  # feed是 存放目录的url
 
 # 获取 任何网页的内容，返回bs4的soup文件
-
+tz = timezone('Asia/Shanghai')
 
 def get_soup(url, is_dynamic=False):
 
@@ -63,9 +64,9 @@ def get_soup(url, is_dynamic=False):
     return soup
 
 
-def gen_fg(website_url, feed_title, feed_description, entry_urls, entry_titles, entry_details, feed_url, guids="news_urls", lang="zh"):
+def gen_fg(website_url, feed_title, feed_description, feed_url, entry_titles, entry_details,entry_urls, guids,updateds,publisheds,truc=0):
 
-    tz = timezone('Asia/Shanghai')
+    
     fg = FeedGenerator()
     # 使用网站标题作为feed标题   Contains a human readable title for the feed
     fg.title(feed_title)
@@ -81,21 +82,44 @@ def gen_fg(website_url, feed_title, feed_description, entry_urls, entry_titles, 
     # feed的作者 Names one author of the feed.
     fg.author(name='catigerose', email='catigerose@gmail.com')
     fg.subtitle(feed_description)  # 使用网站描述作为feed描述
-    fg.language(lang)
+    #fg.language(lang)
     # fg.logo('http://ex.com/logo.jpg')
     #fg.contributor( name='catigerose', email='catigerose@gmail.com' )
     # fg.icon('http://ex.com/logo.jpg') #Icons should be square
 
-    if guids == "news_urls":
-        guids = entry_urls
-    for (entry_link, entry_title, entry_detail, guid) in zip(entry_urls, entry_titles, entry_details, guids):
+    for i  in range(truc,len(guids)):
         fe = fg.add_entry()
 
-        fe.title(entry_title)
-        fe.content(entry_detail,type="html")
-        fe.link(href=entry_link)
-        fe.id(id=guid)
-        fe.updated(datetime.now(tz))
-        fe.published(datetime.now(tz))
+        fe.title(entry_titles[i])
+        fe.content(entry_details[i],type="html")
+        fe.link(href=entry_urls[i])
+        fe.id(id=guids[i])
+        fe.updated(updateds[i])
+        fe.published(publisheds[i])
 
     return fg
+
+
+# 解析 itom种子
+def get_entrys(feed_path):
+    
+    d = feedparser.parse(feed_path)   
+    
+    titles = []
+    contents = []
+    links = []
+    guids = []
+    updateds = []
+    publisheds = []
+    
+    for entry in d.entries:  
+        
+        titles.append(entry.title)
+        contents.append(entry.content[0].value)
+        links.append(entry.link)
+        guids.append(entry.guid)
+        updateds.append(entry.updated)
+        publisheds.append(entry.published)
+    
+    return titles,contents,links,guids,updateds,publisheds
+    
