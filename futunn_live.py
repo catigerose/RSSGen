@@ -22,7 +22,7 @@ if __name__ == '__main__':
     # entry必须使用url作为唯一性的id，相同id entry rss阅读不会再抓取。
     # 直播类网站可能没有url，使用detail生成hash制作伪url。
     from hashlib import md5
-    hash_details = []       
+     
     soup = get_soup(website_url, 1)  # 网页的内容，返回bs4的soup文件    
     # 找到或精确 items位置  ，防止抓到其它版面内容
     news_list = soup.find_all("li", style="cursor: pointer;")    
@@ -47,6 +47,7 @@ if __name__ == '__main__':
             updateds.append(datetime.now(tz))
             publisheds.append(datetime.now(tz))
     truc = min(old_nums,new_nums) # 保证不漏掉新的内容，没有feed文件则新的全部写入，及限制entry数目
+
     # guids 唯一标记了entry，默认使用news_urls,news如无url，需要修改为news_titles
     fg = gen_fg(website_url, feed_title, feed_description, feed_url, 
                 titles, 

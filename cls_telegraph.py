@@ -23,14 +23,15 @@ if __name__ == '__main__':
     # entry必须使用url作为唯一性的id，相同id entry rss阅读不会再抓取。
     #直播类网站可能没有url，使用detail生成hash制作伪url。
     from hashlib import md5
-    guids = []
+
     for news in news_list:
         news=news.find_all("span")[1].div
         news_detail = news.get_text()
         guid = website_url + md5(news_detail.encode(encoding='utf-8')).hexdigest() 
         
         
-        if guid not in guids:             
+        if guid not in guids:    
+            print(guid)
             if news.strong :
                 news_title = news.strong.get_text()
             else:
@@ -46,7 +47,9 @@ if __name__ == '__main__':
             guids.append(guid)
             updateds.append(datetime.now(tz))
             publisheds.append(datetime.now(tz))
+
     truc = min(old_nums,new_nums) # 保证不漏掉新的内容，没有feed文件则新的全部写入，及限制entry数目
+    
     # guids 唯一标记了entry，默认使用news_urls,news如无url，需要修改为news_titles
     fg = gen_fg(website_url, feed_title, feed_description, feed_url, 
                 titles, 
