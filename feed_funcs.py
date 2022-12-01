@@ -111,7 +111,7 @@ def get_entrys(feed_path):
     guids = []
     updateds = []
     publisheds = []
-    
+    d.entries.reverse() # 使较新的entry 在列表后面
     for entry in d.entries:  
         
         titles.append(entry.title)

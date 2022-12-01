@@ -34,6 +34,7 @@ if __name__ == '__main__':
     soup = get_soup(website_url,1)  # 网页的内容，返回bs4的soup文件
     news_list = soup.find("ul",id="content").find_all("li")
 
+    news_list.reverse()  # 新的news排在列表后面  
     for news in news_list[1:]:
         news_url = news.a.attrs['href']  # 详情页的url
         guid = news_url

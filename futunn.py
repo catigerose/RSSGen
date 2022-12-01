@@ -41,8 +41,9 @@ if __name__ == '__main__':
     # 找到或精确 items位置  ，防止抓到其它版面内容
     news_list = soup.find_all("li", class_="news-li")
 
-    # 40条即可，提高抓取频率，减少抓取数量
-    for news in news_list[:40]:
+
+    news_list.reverse()  # 新的news排在列表后面  
+    for news in news_list:
         news_url = news.a.attrs['href']  # 详情页的url
         guid = news_url
 

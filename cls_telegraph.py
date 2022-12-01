@@ -18,12 +18,15 @@ if __name__ == '__main__':
     soup = get_soup(website_url, 1)  # 网页的内容，返回bs4的soup文件
     # 找到或精确 items位置  ，防止抓到其它版面内容
     news_list = soup.find_all("div", class_="clearfix p-r l-h-26p")
+
     
     
     # entry必须使用url作为唯一性的id，相同id entry rss阅读不会再抓取。
     #直播类网站可能没有url，使用detail生成hash制作伪url。
     from hashlib import md5
 
+    news_list.reverse()  # 新的news排在列表后面  
+    
     for news in news_list:
         news=news.find_all("span")[1].div
         news_detail = news.get_text()
@@ -31,7 +34,7 @@ if __name__ == '__main__':
         
         
         if guid not in guids:    
-            print(guid)
+            
             if news.strong :
                 news_title = news.strong.get_text()
             else:

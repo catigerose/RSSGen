@@ -47,7 +47,7 @@ if __name__ == '__main__':
         soup = get_soup(url0, 1)  # 网页的内容，返回bs4的soup文件
 
         news_list = soup.find("ul", class_="news-list").find_all("a")  # 获取新闻列表
-        
+        #news_list.reverse() 
         for news in news_list:
 
 

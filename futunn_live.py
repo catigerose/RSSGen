@@ -26,6 +26,7 @@ if __name__ == '__main__':
     soup = get_soup(website_url, 1)  # 网页的内容，返回bs4的soup文件    
     # 找到或精确 items位置  ，防止抓到其它版面内容
     news_list = soup.find_all("li", style="cursor: pointer;")    
+    news_list.reverse()  # 新的news排在列表后面  
     for news in news_list:
         news_detail = news.p.decode() + "   "+news.span.decode()
         if news.h3.get_text() == '':

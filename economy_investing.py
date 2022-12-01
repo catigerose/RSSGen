@@ -22,6 +22,7 @@ if __name__ == '__main__':
     news_list = soup.find_all(
         "article", class_="js-article-item articleItem")  # 找到或精确 items位置
 
+    news_list.reverse()  # 新的news排在列表后面  
     for news in news_list:
         news_url = "https://cn.investing.com"+news.a.attrs['href']  # 详情页的url
         guid = news_url

@@ -33,6 +33,7 @@ if __name__ == '__main__':
     news_list = soup.find(
         "div", class_="home-list-scroll").find_all("div", class_="info-item-content")
 
+    news_list.reverse()  # 新的news排在列表后面  
     for news in news_list:
         news_url = "https://www.zhitongcaijing.com" + \
             news.div.a.attrs['href']  # 详情页的url

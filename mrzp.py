@@ -26,6 +26,7 @@ if __name__ == '__main__':
     news_list = soup.find(
         "div", class_="right news").find_all("div", class_="list")
 
+    news_list.reverse()  # 新的news排在列表后面  
     for news in news_list:
         
         news_url = news.find(

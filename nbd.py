@@ -35,6 +35,7 @@ if __name__ == '__main__':
     news_list = soup.find(
         "ul", class_="u-news-list").find_all("li", class_="u-news-title")
 
+    news_list.reverse()  # 新的news排在列表后面  
     for news in news_list:
         news_url = news.a.attrs['href']  # 详情页的url
         guid = news_url
