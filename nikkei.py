@@ -3,20 +3,31 @@ from datetime import datetime
 
 # 该函数获取详情页的新闻内容
 def get_content(news_url):
-    soup = get_soup(website_url+news_url)
-    content = soup.find("div","newsText fix").decode()
+    urls = [news_url]
+    content = ""
+    soup = get_soup(news_url)
     if soup.find("div","pagenavbar"):
         othter_pages = soup.find("div","pagenavbar").find_all("span")[1:-1]
         for page in othter_pages:
-            next_soup = get_soup(website_url+page.a.attrs['href'])
-            next_content=next_soup.find("div","newsText fix").decode()
-            content +=next_content
-
+            urls.append(website_url+page.a.attrs['href'])
+        
+        for url in urls:
+            soup = get_soup(url)
+            soup.find("div","newsText fix").find("div",class_="pagenavbar").decompose()
+            soup.find("div","newsText fix").find_all("strong")[-1].decompose()
+            soup.find("div","newsText fix").find_all("div")[-1].decompose()
+            content += soup.find("div","newsText fix").decode()
+    else:
+        for url in urls:
+            soup = get_soup(url)
+            #soup.find("div","newsText fix").find("div",class_="pagenavbar").decompose()
+            soup.find("div","newsText fix").find_all("strong")[-1].decompose()
+            #soup.find("div","newsText fix").find_all("div")[-1].decompose()
+            content += soup.find("div","newsText fix").decode()
  
     import time
     time.sleep(0.5)  # 间隔时间防止反爬虫
     return content
-
 
 if __name__ == '__main__':
 
@@ -51,7 +62,7 @@ if __name__ == '__main__':
     
     news_list.reverse()  # 新的news排在列表后面  
     for news in news_list:
-        news_url = news.a.attrs['href']  # 详情页的url
+        news_url = website_url+news.a.attrs['href']  # 详情页的url
         guid = news_url
 
 
