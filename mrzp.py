@@ -24,9 +24,11 @@ if __name__ == '__main__':
     news_list = soup.find_all("div", class_="live-item") # 找到或精确 items位置  ，避免抓到其它版面内容
     
     news_list = soup.find(
-        "div", class_="right news").find_all("div", class_="list")
+        "div", id="page").find_all("div", class_="list")
 
     news_list.reverse()  # 新的news排在列表后面  
+    del news_list[5]  # 网站问题，该条数据无效
+    
     for news in news_list:
         
         news_url = news.find(

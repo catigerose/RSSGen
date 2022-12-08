@@ -1,8 +1,5 @@
 
-
-
-from feed_funcs import gen_fg, feeds_url, feeds_dir, get_entrys, tz, get_json
-
+from feed_funcs import get_soup, gen_fg, feeds_url, feeds_dir, get_entrys, tz
 from datetime import datetime
 
 if __name__ == '__main__':
@@ -15,35 +12,30 @@ if __name__ == '__main__':
     
     feed_path = feeds_dir + feed_name
     feed_url = feeds_url + feed_name
-    titles, contents, links, guids, updateds, publisheds = get_entrys( feed_path)
+    titles, contents, links, guids, updateds, publisheds = get_entrys(  feed_path)
     new_nums = 0
     old_nums = len(guids)
     
-  
-
     
-    url="https://news.futunn.com/main/live-list?page=0&page_size=50"
-   
-    data = get_json(url)
     
-    news_list = data['data']['list']
     
-   
+    # entry必须使用url作为唯一性的id，相同id entry rss阅读不会再抓取。
+    # 直播类网站可能没有url，使用detail生成hash制作伪url。
+    from hashlib import md5
+     
+    soup = get_soup(website_url, 1)  # 网页的内容，返回bs4的soup文件    
+    # 找到或精确 items位置  ，防止抓到其它版面内容
+    news_list = soup.find_all("li", style="cursor: pointer;")    
     news_list.reverse()  # 新的news排在列表后面  
     for news in news_list:
-        
-        news_url = "https://news.futunn.com/flash/" + str(news["idx"])
-        guid = news_url
-        news_detail = news["content"]
-        pub_time =datetime.fromtimestamp(news["timestamp"], tz) 
-        
-        news_title = news["title"]
-        if news_title == "":
-            news_title =  news_detail
-      
-    
-        
-     
+        news_detail = news.p.decode() + "   "+news.span.decode()
+        if news.h3.get_text() == '':
+            news_title = news.p.get_text()
+        else:
+            news_title = news.h3.get_text()  # 新闻的标题
+        guid = website_url + \
+            md5(news_detail.encode(encoding='utf-8')).hexdigest() 
+        news_url = guid
         
         
         
@@ -53,8 +45,8 @@ if __name__ == '__main__':
             contents.append(news_detail)
             links.append(news_url)
             guids.append(guid)
-            updateds.append(pub_time)
-            publisheds.append(pub_time)
+            updateds.append(datetime.now(tz))
+            publisheds.append(datetime.now(tz))
     truc = min(old_nums,new_nums) # 保证不漏掉新的内容，没有feed文件则新的全部写入，及限制entry数目
 
     # guids 唯一标记了entry，默认使用news_urls,news如无url，需要修改为news_titles

@@ -1,5 +1,6 @@
 from feed_funcs import get_soup, gen_fg, feeds_url, feeds_dir, get_entrys, tz
 from datetime import datetime
+import time
 
 # 该函数获取详情页的新闻内容
 def get_content(news_url):
@@ -20,13 +21,14 @@ def get_content(news_url):
     else:
         for url in urls:
             soup = get_soup(url)
+            time.sleep(2)
             #soup.find("div","newsText fix").find("div",class_="pagenavbar").decompose()
             soup.find("div","newsText fix").find_all("strong")[-1].decompose()
             #soup.find("div","newsText fix").find_all("div")[-1].decompose()
             content += soup.find("div","newsText fix").decode()
  
-    import time
-    time.sleep(0.5)  # 间隔时间防止反爬虫
+   
+    time.sleep(2)  # 间隔时间防止反爬虫
     return content
 
 if __name__ == '__main__':
@@ -42,15 +44,16 @@ if __name__ == '__main__':
     new_nums = 0
     old_nums = len(guids) 
     
+   
     
     soup = get_soup(website_url)
     soup = soup.find("div",class_="column-2 mainContent")   #左侧新闻
     
     news_list =[]  #用于汇集所有新闻
     
-    news_list.append(soup.find("div",class_="indexTopNews fix mB5").find("dt")) #top news第一个新闻
+    news_list.append(soup.find("div",class_="indexTopNews fix mB5").find("dl",class_="newsContent01").find("dt")) #top news第一个新闻
     
-    top_news = soup.find("div",class_="indexTopNews fix mB5").find("ul").find_all("li")   
+    top_news = soup.find("div",class_="indexTopNews fix mB5").find("dl",class_="newsContent01").find("ul").find_all("li")   
     news_list.extend(top_news) #top news
     
     focus = soup.find("div",class_="fix pR15").find("div",class_="column-1 frt").find_all("dl",class_="newsContent01")[0].find_all("dt")
@@ -58,6 +61,8 @@ if __name__ == '__main__':
     
     column = soup.find("div",class_="fix pR15").find("div",class_="column-1 frt").find_all("dl",class_="newsContent01")[1].find_all("dt")
     news_list.extend(column)  #专栏板块
+    
+   
     
     
     news_list.reverse()  # 新的news排在列表后面  

@@ -1,5 +1,5 @@
 
-from feed_funcs import get_soup, gen_fg, feeds_url, feeds_dir, get_entrys, tz
+from feed_funcs import gen_fg, feeds_url, feeds_dir, get_entrys, tz,get_json
 from datetime import datetime
 
 if __name__ == '__main__':
@@ -18,34 +18,32 @@ if __name__ == '__main__':
     new_nums = 0
     old_nums = len(guids)
     
-    # 该部分为爬虫模块，不同feed一般不一样 
-    soup = get_soup(website_url,is_dynamic=True)  # 网页的内容，返回bs4的soup文件   
-    news_list = soup.find_all("div", class_="live-item") # 找到或精确 items位置  ，避免抓到其它版面内容
+    url="https://api-one-wscn.awtmt.com/apiv1/content/lives?channel=global-channel&client=pc&limit=40&first_page=true&accept=live%2Cvip-live"
+    data = get_json(url)
+    news_list = data['data']['items']
     news_list.reverse()  # 新的news排在列表后面
     for news in news_list:
-        news_url = news.a.attrs['href']  # 详情页的url
+        news_url = news["uri"]  # 详情页的url
         guid = news_url
-        try:
-            news_detail = news.div.div.p.get_text()
-        except:
-            news_detail = news.div.div.get_text()
-
-        news_title = news_detail  # 新闻的标题
+        
+        news_detail =  news["content_text"]
+        
+        
+        news_title = news["title"]  # 新闻的标题
+        if news_title == "":
+            news_title = news["content"]
+            
+        pub_time=datetime.fromtimestamp(news["display_time"] , tz)
 
         if guid not in guids:
-            try:
-                news_detail = news.div.div.p.get_text()
-            except:
-                news_detail = news.div.div.get_text()
 
-            news_title = news_detail  # 新闻的标题
             new_nums += 1
             titles.append(news_title)
             contents.append(news_detail)
             links.append(news_url)
             guids.append(guid)
-            updateds.append(datetime.now(tz))
-            publisheds.append(datetime.now(tz))
+            updateds.append(pub_time)
+            publisheds.append(pub_time)
     truc = min(old_nums,new_nums) # 保证不漏掉新的内容，没有feed文件则新的全部写入，及限制entry数目
     # guids 唯一标记了entry，默认使用news_urls,news如无url，需要修改为news_titles
     fg = gen_fg(website_url, feed_title, feed_description, feed_url, 

@@ -5,8 +5,8 @@ from datetime import datetime
 
 def get_content(news_url):
     detail_soup = get_soup(news_url) # 构建beautifulsoup实例  
-    if detail_soup.find("div", class_="content_area"):
-        news_detail = detail_soup.find("div", class_="content_area").decode()
+    if detail_soup.find("div", id="content_area"):
+        news_detail = detail_soup.find("div", id="content_area").decode()
     else:   
         news_detail = detail_soup.body.decode()
     #news_detail = detail_soup.find("div", class_="g-article").decode()      

@@ -10,6 +10,7 @@ from selenium.webdriver.chrome.service import Service
 from feedgen.feed import FeedGenerator
 from pytz import timezone
 import feedparser
+import json
 
 # 根据操作系统指定工作目录，使代码在linux和windows都能运行。
 if system() == 'Linux':
@@ -122,4 +123,12 @@ def get_entrys(feed_path):
         publisheds.append(entry.published)
     
     return titles,contents,links,guids,updateds,publisheds
-    
+
+# 获取api接口数据，并用python json解析，返回字典
+def get_json(url):
+    headers = {
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36", }
+
+    ret = requests.get(url, headers=headers).text
+    data = json.loads(ret)
+    return data
