@@ -31,7 +31,7 @@ if __name__ == '__main__':
         
         news_title = news["title"]  # 新闻的标题
         if news_title == "":
-            news_title = news["content"]
+            news_title = news_detail
             
         pub_time=datetime.fromtimestamp(news["display_time"] , tz)
 

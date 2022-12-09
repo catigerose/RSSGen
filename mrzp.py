@@ -27,27 +27,27 @@ if __name__ == '__main__':
         "div", id="page").find_all("div", class_="list")
 
     news_list.reverse()  # 新的news排在列表后面  
-    del news_list[5]  # 网站问题，该条数据无效
+   
     
     for news in news_list:
-        
-        news_url = news.find(
-            "div", class_="morezp").a.attrs['href']  # 详情页的url
-        guid = news_url
-
-        if guid not in guids:             
-            news_title = news.h2.get_text()  # 新闻的标题
-            news_detail = news.find("div", class_="f14 info").p.get_text()
-
-            
-                      
-            new_nums += 1
-            titles.append(news_title)
-            contents.append(news_detail)
-            links.append(news_url)
-            guids.append(guid)
-            updateds.append(datetime.now(tz))
-            publisheds.append(datetime.now(tz))
+        if news.find( "div", class_="morezp"):
+            news_url = news.find(
+                "div", class_="morezp").a.attrs['href']  # 详情页的url
+            guid = news_url
+    
+            if guid not in guids:             
+                news_title = news.h2.get_text()  # 新闻的标题
+                news_detail = news.find("div", class_="f14 info").p.get_text()
+    
+                
+                          
+                new_nums += 1
+                titles.append(news_title)
+                contents.append(news_detail)
+                links.append(news_url)
+                guids.append(guid)
+                updateds.append(datetime.now(tz))
+                publisheds.append(datetime.now(tz))
     truc = min(old_nums,new_nums) # 保证不漏掉新的内容，没有feed文件则新的全部写入，及限制entry数目
     # guids 唯一标记了entry，默认使用news_urls,news如无url，需要修改为news_titles
     fg = gen_fg(website_url, feed_title, feed_description, feed_url, 
