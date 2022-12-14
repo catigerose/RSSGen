@@ -44,40 +44,40 @@ if __name__ == '__main__':
         
         
 
-        soup = get_soup(url0, 1)  # 网页的内容，返回bs4的soup文件
+        soup = get_soup(url0)  # 网页的内容，返回bs4的soup文件
+        if soup.find("ul", class_="news-list"):
 
-        news_list = soup.find("ul", class_="news-list").find_all("a")  # 获取新闻列表
-        #news_list.reverse() 
-        for news in news_list:
-
-
-            news_title = news.get_text()  # 新闻的标题
-            
-            # 过滤一些报道
-            filter_strings =["责编","图片报道","广告"]
-            filter_results=[]
-            for str in filter_strings:
-                filter_result=  news_title.find(str)==-1
-                filter_results.append(filter_result)
+            news_list = soup.find("ul", class_="news-list").find_all("a")  # 获取新闻列表
+            #news_list.reverse() 
+            for news in news_list:
+    
+    
+                news_title = news.get_text()  # 新闻的标题
                 
-        
-            if False in filter_results :
-                pass
-            else: 
-                news_url = domain + news.attrs['href']  # 详情页的url
-                guid = news_url
-
-                if guid not in guids:             
-                    news_detail = get_soup(news_url).find("div", class_="article").decode()  # 获取新闻内容详情             
-        
-                    
-                              
-                    new_nums += 1
-                    titles.append(news_title)
-                    contents.append(news_detail)
-                    links.append(news_url)
-                    guids.append(guid)
-                    updateds.append(datetime.now(tz))
+                # 过滤一些报道
+                filter_strings =["责编","图片报道","广告"]
+                filter_results=[]
+                for str in filter_strings:
+                    filter_result=  news_title.find(str)==-1
+                    filter_results.append(filter_result)                          
+                if False in filter_results :
+                    pass
+                
+                else: 
+                    news_url = domain + news.attrs['href']  # 详情页的url
+                    guid = news_url
+    
+                    if guid not in guids:             
+                        news_detail = get_soup(news_url).find("div", class_="article").decode()  # 获取新闻内容详情             
+            
+                        
+                                  
+                        new_nums += 1
+                        titles.append(news_title)
+                        contents.append(news_detail)
+                        links.append(news_url)
+                        guids.append(guid)
+                        updateds.append(datetime.now(tz))
                     publisheds.append(datetime.now(tz))
     truc = min(old_nums,new_nums) # 保证不漏掉新的内容，没有feed文件则新的全部写入，及限制entry数目
     # guids 唯一标记了entry，默认使用news_urls,news如无url，需要修改为news_titles
