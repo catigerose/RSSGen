@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime
+from os import getenv
 from pathlib import Path
 from platform import system
 from time import sleep
@@ -30,7 +31,9 @@ else:
 
 FEEDS_DIR = WORK_DIR / "feeds"
 FEEDS_DIR.mkdir(parents=True, exist_ok=True)
-FEEDS_BASE_URL = "http://rss.catigerose.tech/feeds/"
+FEEDS_BASE_URL = getenv(
+    "RSSGEN_FEEDS_BASE_URL", "https://rss.catigerose.tech:8081/feeds/"
+)
 
 DEFAULT_HEADERS = {
     "User-Agent": (
