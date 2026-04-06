@@ -1,0 +1,39 @@
+# uv 环境目录 (核心)
+.venv/
+.uv-cache/
+
+# 以前传统 venv 的残留 (保留以防万一)
+bin/
+include/
+lib/
+lib64/
+pyvenv.cfg
+
+# Python 编译缓存
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.py,cover
+
+# 测试与工具缓存
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Jupyter / 本地临时文件
+.ipynb_checkpoints/
+*.tmp
+*.log
+
+# 爬虫产出的 RSS 文件 (不进版本库)
+feeds/*.xml
+
+# 本地环境变量或密钥 (如果有)
+.env
+.python-version
+
+# 编辑器文件
+.vscode/
+.idea/
+.DS_Store
