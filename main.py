@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import runpy
 import sys
+import traceback
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent
@@ -47,11 +48,27 @@ def resolve_scripts(arguments):
 
 def main():
     scripts = resolve_scripts(sys.argv[1:])
+    failed_scripts = []
+
     for script_path in scripts:
         print(f"开始执行: {script_path.name}")
-        # 使用 runpy 保持现有“每个站点一个独立脚本”的项目结构。
-        runpy.run_path(str(script_path), run_name="__main__")
+        try:
+            # 使用 runpy 保持现有“每个站点一个独立脚本”的项目结构。
+            runpy.run_path(str(script_path), run_name="__main__")
+        except KeyboardInterrupt:
+            raise
+        except Exception as exc:
+            failed_scripts.append((script_path.name, exc))
+            print(f"执行失败，已跳过: {script_path.name} -> {exc}")
+            traceback.print_exc()
+            continue
+
         print(f"执行完成: {script_path.name}")
+
+    if failed_scripts:
+        print("\n以下脚本执行失败，已跳过：")
+        for script_name, exc in failed_scripts:
+            print(f"- {script_name}: {exc}")
 
 
 if __name__ == "__main__":
